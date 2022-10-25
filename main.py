@@ -9,6 +9,9 @@ YOU NEED TO HAVE DOPE SHEET OPEN
 # THIS SETS THE GAP BETWEEN KEY FRAMES FOR SELECTED OBJECT 0 WILL SELECT ALL 
 offset_amount = 1
 
+# THIS SETS THE STOP FRAME
+end_frame = 40
+
 def context_swap(area_type=""):
 
         if area_type == "":
@@ -28,8 +31,12 @@ def context_swap(area_type=""):
 context_override = context_swap("DOPESHEET_EDITOR")
 
 count = offset_amount
+
 while True: 
     
+    if end_frame < bpy.data.scenes[0].frame_current:
+        break
+
     if count == offset_amount:
         bpy.ops.action.select_column(context_override,mode='CFRA')
         count = 0
