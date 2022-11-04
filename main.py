@@ -11,8 +11,30 @@ offset_amount = 1
 
 # MOVES EACH FRAME BY THE AMOUNT
 move_amount = 0
+
+# IMP
+# THIS ADDS OR REMOVE SPACE BETWEEN FRAMES
+spaceing = 1
+
 # THIS SETS THE STOP FRAME
-end_frame = 40
+end_frame = 10
+
+start_frame = bpy.data.scenes[0].frame_current 
+
+def count_steps(steps):
+
+    bpy.data.scenes[0].frame_current = start_frame  
+    
+    count_steps = steps
+    
+    while True: 
+
+            ret = bpy.ops.screen.keyframe_jump(next=True)
+            
+            if 'CANCELLED' in ret or end_frame <= bpy.data.scenes[0].frame_current:
+                return count_steps
+            
+            count_steps += 1
 
 def context_swap(area_type=""):
 
@@ -42,6 +64,7 @@ while True:
     if count == offset_amount:
         bpy.ops.action.select_column(context_override,mode='CFRA')
         count = 0
+
     else:
         count += 1
     ret = bpy.ops.screen.keyframe_jump(next=True)
@@ -54,3 +77,79 @@ if move_amount != 0:
                                 orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size = move_amount,
                                 use_proportional_connected=False, use_proportional_projected=False)
 
+steps = 1
+if spaceing != 0:
+    
+    bpy.data.scenes[0].frame_current = start_frame
+
+    bpy.ops.action.select_all(context_override,action='DESELECT')
+    
+    if spaceing < 0:
+        # TODO :: PRE CALCULATE IF NON DESTUCTIVE AND MOVE OUT OF WAY 
+
+        while True:
+            if end_frame < bpy.data.scenes[0].frame_current:
+                break
+
+            if count == offset_amount:
+                bpy.ops.action.select_column(context_override,mode='CFRA')
+                count = 0
+            else:
+                count += 1
+            ret = bpy.ops.screen.keyframe_jump(next=True)
+    
+            if 'CANCELLED' in ret:
+                break
+    else:
+        
+        steps = count_steps(0) + 1               
+        step = 0
+        
+        bpy.data.scenes[0].frame_current = end_frame
+
+        while True:
+
+            ret = bpy.ops.screen.keyframe_jump(next=True)
+
+            bpy.ops.action.select_column(context_override,mode='CFRA')
+
+            if 'CANCELLED' in ret:
+                break
+        
+        move_amount = spaceing*steps
+
+        bpy.ops.transform.transform(context_override, mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+                                orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size = move_amount,
+                                use_proportional_connected=False, use_proportional_projected=False)
+
+        bpy.ops.action.select_all(context_override,action='DESELECT')
+
+        bpy.data.scenes[0].frame_current = end_frame
+
+        bpy.ops.screen.keyframe_jump(next=False)
+        
+        bpy.ops.screen.keyframe_jump(next=True)
+        
+        if bpy.data.scenes[0].frame_current != end_frame:
+            bpy.ops.screen.keyframe_jump(next=False)
+        
+        while True:
+
+            bpy.ops.action.select_column(context_override,mode='CFRA')
+
+            current_frame = bpy.data.scenes[0].frame_current
+
+            reposition = spaceing*(steps - step - 1)
+            
+            bpy.data.scenes[0].frame_current = current_frame + reposition
+
+            bpy.ops.action.snap(context_override,type='CFRA')
+
+            ret = bpy.ops.screen.keyframe_jump(next=False)
+
+            if 'CANCELLED' in ret or start_frame > bpy.data.scenes[0].frame_current:
+                break
+            
+            step += 1
+            
+            bpy.ops.action.select_all(context_override,action='DESELECT')
