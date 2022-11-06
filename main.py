@@ -17,24 +17,39 @@ move_amount = 0
 spaceing = 1
 
 # THIS SETS THE STOP FRAME
-end_frame = 10
+stop_frame = 10
+
+# THIS MAKES THE SPACING BETTWEEN THE FRAMES N FOR ALL FRAMES IN THE GIVEN RANGE 
+force_spacing = 0
 
 start_frame = bpy.data.scenes[0].frame_current 
 
-def count_steps(steps):
-
+def count_steps(steps,isPositive):
+    
     bpy.data.scenes[0].frame_current = start_frame  
     
     count_steps = steps
-    
-    while True: 
+
+    if isPositive:
+
+        while True: 
 
             ret = bpy.ops.screen.keyframe_jump(next=True)
             
-            if 'CANCELLED' in ret or end_frame <= bpy.data.scenes[0].frame_current:
+            if 'CANCELLED' in ret or stop_frame <= bpy.data.scenes[0].frame_current:
                 return count_steps
             
             count_steps += 1
+    else:
+        while True:
+
+            ret = bpy.ops.screen.keyframe_jump(next=False)
+
+            if 'CANCELLED' in ret or stop_frame >= bpy.data.scenes[0].frame_current:
+                return count_steps
+            
+            count_steps += 1
+
 
 def context_swap(area_type=""):
 
@@ -58,7 +73,7 @@ count = offset_amount
 
 while True: 
     
-    if end_frame < bpy.data.scenes[0].frame_current:
+    if stop_frame < bpy.data.scenes[0].frame_current:
         break
 
     if count == offset_amount:
@@ -85,27 +100,37 @@ if spaceing != 0:
     bpy.ops.action.select_all(context_override,action='DESELECT')
     
     if spaceing < 0:
-        # TODO :: PRE CALCULATE IF NON DESTUCTIVE AND MOVE OUT OF WAY 
-
-        while True:
-            if end_frame < bpy.data.scenes[0].frame_current:
-                break
-
-            if count == offset_amount:
-                bpy.ops.action.select_column(context_override,mode='CFRA')
-                count = 0
-            else:
-                count += 1
-            ret = bpy.ops.screen.keyframe_jump(next=True)
-    
-            if 'CANCELLED' in ret:
-                break
-    else:
         
-        steps = count_steps(0) + 1               
+        steps = count_steps(0,False) + 1
         step = 0
         
-        bpy.data.scenes[0].frame_current = end_frame
+        bpy.data.scenes[0].frame_current = start_frame
+
+        while True:
+            
+            bpy.ops.action.select_column(context_override,mode='CFRA')
+
+            bpy.ops.transform.transform(context_override, mode='TIME_TRANSLATE', value=(spaceing, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+                                orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size = 1,
+                                use_proportional_connected=False, use_proportional_projected=False)
+            
+            
+            bpy.data.scenes[0].frame_current = bpy.data.scenes[0].frame_current + spaceing
+            ret = bpy.ops.screen.keyframe_jump(next=False)
+
+            if ret == 'CANCELLED' or bpy.data.scenes[0].frame_current <= stop_frame:
+                break
+
+        # ! TODO :: MOVE THE REMANEING KEY_FRAMES AFTER START LOCATION  CLOSE  
+
+
+
+    else:
+        
+        steps = count_steps(0,True) + 1               
+        step = 0
+        
+        bpy.data.scenes[0].frame_current = stop_frame
 
         while True:
 
@@ -124,13 +149,13 @@ if spaceing != 0:
 
         bpy.ops.action.select_all(context_override,action='DESELECT')
 
-        bpy.data.scenes[0].frame_current = end_frame
+        bpy.data.scenes[0].frame_current = stop_frame
 
         bpy.ops.screen.keyframe_jump(next=False)
         
         bpy.ops.screen.keyframe_jump(next=True)
         
-        if bpy.data.scenes[0].frame_current != end_frame:
+        if bpy.data.scenes[0].frame_current != stop_frame:
             bpy.ops.screen.keyframe_jump(next=False)
         
         while True:
