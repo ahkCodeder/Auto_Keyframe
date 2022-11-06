@@ -14,13 +14,10 @@ move_amount = 0
 
 # IMP
 # THIS ADDS OR REMOVE SPACE BETWEEN FRAMES
-spaceing = 1
+spaceing = -2
 
 # THIS SETS THE STOP FRAME
-stop_frame = 10
-
-# THIS MAKES THE SPACING BETTWEEN THE FRAMES N FOR ALL FRAMES IN THE GIVEN RANGE 
-force_spacing = 0
+end_frame = 2
 
 start_frame = bpy.data.scenes[0].frame_current 
 
@@ -36,7 +33,7 @@ def count_steps(steps,isPositive):
 
             ret = bpy.ops.screen.keyframe_jump(next=True)
             
-            if 'CANCELLED' in ret or stop_frame <= bpy.data.scenes[0].frame_current:
+            if {'CANCELLED'} == ret or end_frame <= bpy.data.scenes[0].frame_current:
                 return count_steps
             
             count_steps += 1
@@ -44,8 +41,8 @@ def count_steps(steps,isPositive):
         while True:
 
             ret = bpy.ops.screen.keyframe_jump(next=False)
-
-            if 'CANCELLED' in ret or stop_frame >= bpy.data.scenes[0].frame_current:
+            
+            if {'CANCELLED'} == ret or end_frame >= bpy.data.scenes[0].frame_current:
                 return count_steps
             
             count_steps += 1
@@ -73,7 +70,7 @@ count = offset_amount
 
 while True: 
     
-    if stop_frame < bpy.data.scenes[0].frame_current:
+    if end_frame < bpy.data.scenes[0].frame_current:
         break
 
     if count == offset_amount:
@@ -84,7 +81,7 @@ while True:
         count += 1
     ret = bpy.ops.screen.keyframe_jump(next=True)
 
-    if 'CANCELLED' in ret:
+    if {'CANCELLED'} == ret:
         break
     
 if move_amount != 0:
@@ -118,19 +115,35 @@ if spaceing != 0:
             bpy.data.scenes[0].frame_current = bpy.data.scenes[0].frame_current + spaceing
             ret = bpy.ops.screen.keyframe_jump(next=False)
 
-            if ret == 'CANCELLED' or bpy.data.scenes[0].frame_current <= stop_frame:
+            if ret == {'CANCELLED'} or bpy.data.scenes[0].frame_current <= end_frame:
                 break
-
+            
+        bpy.data.scenes[0].frame_current = start_frame
+        
+        bpy.ops.action.select_all(context_override,action='DESELECT')
+        
+        while True:
+            
+            ret = bpy.ops.screen.keyframe_jump(next=True)
+            bpy.ops.action.select_column(context_override,mode='CFRA')
+            
+        
+            if ret == {'CANCELLED'}:
+                break
+        
+        move_amount = spaceing*steps
+        bpy.ops.transform.transform(context_override, mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+                                orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size = 1,
+                                use_proportional_connected=False, use_proportional_projected=False)
+        
         # ! TODO :: MOVE THE REMANEING KEY_FRAMES AFTER START LOCATION  CLOSE  
-
-
 
     else:
         
         steps = count_steps(0,True) + 1               
         step = 0
         
-        bpy.data.scenes[0].frame_current = stop_frame
+        bpy.data.scenes[0].frame_current = end_frame
 
         while True:
 
@@ -138,7 +151,7 @@ if spaceing != 0:
 
             bpy.ops.action.select_column(context_override,mode='CFRA')
 
-            if 'CANCELLED' in ret:
+            if ret == {'CANCELLED'}:
                 break
         
         move_amount = spaceing*steps-spaceing
@@ -149,13 +162,13 @@ if spaceing != 0:
 
         bpy.ops.action.select_all(context_override,action='DESELECT')
 
-        bpy.data.scenes[0].frame_current = stop_frame
+        bpy.data.scenes[0].frame_current = end_frame
 
         bpy.ops.screen.keyframe_jump(next=False)
         
         bpy.ops.screen.keyframe_jump(next=True)
         
-        if bpy.data.scenes[0].frame_current != stop_frame:
+        if bpy.data.scenes[0].frame_current != end_frame:
             bpy.ops.screen.keyframe_jump(next=False)
         
         while True:
@@ -172,7 +185,7 @@ if spaceing != 0:
 
             ret = bpy.ops.screen.keyframe_jump(next=False)
 
-            if 'CANCELLED' in ret or start_frame > bpy.data.scenes[0].frame_current:
+            if {'CANCELLED'} == ret or start_frame > bpy.data.scenes[0].frame_current:
                 break
             
             step += 1
