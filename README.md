@@ -1,10 +1,12 @@
 # Auto_Keyframe
-This automates key selection in blender
+This automates key selection in blender AND MORE
 
 ## CURRENT CAPAIBETYS 
 
-allows you to select keyframes with a gap between them the future versions will 
-allow for more advanced stuff
+- selection of keyframes that are spaced appart with **offset_amount**
+- moveing each frame selected with **move_amount**
+- spaceing this allows you to add or remove space bettween each frame with in a range with **spaceing**
+- then you can force equal spacing for all frames with **force_all_constant_spaceing**
 
 ## QUICK DEMO OF HOW IT WORKS 
 
