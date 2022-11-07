@@ -16,7 +16,8 @@ move_amount = 0
 # THIS ADDS OR REMOVE SPACE BETWEEN FRAMES
 spaceing = -2
 
-force_constant_spaceing = 0
+# TODO  :: IMP
+force_all_constant_spaceing = 0
 
 # THIS SETS THE STOP FRAME
 end_frame = 2
@@ -194,7 +195,7 @@ if spaceing != 0:
             
             bpy.ops.action.select_all(context_override,action='DESELECT')
 
-if force_constant_spaceing != 0:
+if force_all_constant_spaceing != 0:
     
     # TODO :: IMPLIMENT STOP POINT
 
@@ -210,9 +211,9 @@ if force_constant_spaceing != 0:
 
         next_frame_index = bpy.data.scenes[0].frame_current
         
-        if (next_frame_index - current_frame) != force_constant_spaceing:
+        if (next_frame_index - current_frame) != force_all_constant_spaceing:
             
-            move_amount = -1*((next_frame_index - current_frame) - force_constant_spaceing)
+            move_amount = -1*((next_frame_index - current_frame) - force_all_constant_spaceing)
 
         while True:
             
@@ -226,7 +227,7 @@ if force_constant_spaceing != 0:
                                 orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size = move_amount,
                                 use_proportional_connected=False, use_proportional_projected=False)
 
-        bpy.data.scenes[0].frame_current = current_frame + force_constant_spaceing
+        bpy.data.scenes[0].frame_current = current_frame + force_all_constant_spaceing
 
         bpy.ops.action.select_all(context_override,action='DESELECT')
         
