@@ -16,6 +16,8 @@ move_amount = 0
 # THIS ADDS OR REMOVE SPACE BETWEEN FRAMES
 spaceing = -2
 
+force_constant_spaceing = 0
+
 # THIS SETS THE STOP FRAME
 end_frame = 2
 
@@ -191,3 +193,47 @@ if spaceing != 0:
             step += 1
             
             bpy.ops.action.select_all(context_override,action='DESELECT')
+
+if force_constant_spaceing != 0:
+    
+    # TODO :: IMPLIMENT STOP POINT
+
+    bpy.ops.action.select_all(context_override,action='DESELECT')
+    
+    bpy.data.scenes[0].frame_current = start_frame
+
+    while True:
+
+        current_frame = bpy.data.scenes[0].frame_current
+
+        ret = bpy.ops.screen.keyframe_jump(next=True)
+
+        next_frame_index = bpy.data.scenes[0].frame_current
+        
+        if (next_frame_index - current_frame) != force_constant_spaceing:
+            
+            move_amount = -1*((next_frame_index - current_frame) - force_constant_spaceing)
+
+        while True:
+            
+            bpy.ops.action.select_column(context_override,mode='CFRA')
+            ret = bpy.ops.screen.keyframe_jump(next=True)
+
+            if ret == {'CANCELLED'}:
+                break 
+    
+        bpy.ops.transform.transform(context_override, mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+                                orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size = move_amount,
+                                use_proportional_connected=False, use_proportional_projected=False)
+
+        bpy.data.scenes[0].frame_current = current_frame + force_constant_spaceing
+
+        bpy.ops.action.select_all(context_override,action='DESELECT')
+        
+        ret = bpy.ops.screen.keyframe_jump(next=True)
+    
+
+        if ret == {'CANCELLED'}:
+            break
+        
+        bpy.ops.screen.keyframe_jump(next=False)
