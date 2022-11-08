@@ -12,11 +12,11 @@ offset_amount = 1
 # MOVES EACH FRAME BY THE AMOUNT
 move_amount = 0
 
-# IMP
+
 # THIS ADDS OR REMOVE SPACE BETWEEN FRAMES
 spaceing = -2
 
-# TODO  :: IMP
+
 force_all_constant_spaceing = 0
 
 # THIS SETS THE STOP FRAME
@@ -135,11 +135,12 @@ if spaceing != 0:
                 break
         
         move_amount = spaceing*steps
+        
         bpy.ops.transform.transform(context_override, mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
                                 orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size = 1,
                                 use_proportional_connected=False, use_proportional_projected=False)
         
-        # ! TODO :: MOVE THE REMANEING KEY_FRAMES AFTER START LOCATION  CLOSE  
+
 
     else:
         
