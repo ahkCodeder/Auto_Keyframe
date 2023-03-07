@@ -7,6 +7,7 @@ This automates key selection in blender AND MORE
 - moveing each frame selected with **move_amount**
 - spaceing this allows you to add or remove space bettween each frame with in a range with **spaceing**
 - then you can force equal spacing for all frames with **force_all_constant_spaceing**
+- **EASING IS NOT IMPLEMENTED YET**
 
 ## QUICK DEMO OF HOW IT WORKS 
 
