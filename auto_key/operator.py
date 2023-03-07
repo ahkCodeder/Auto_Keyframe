@@ -35,8 +35,13 @@ class DATA_OT_DS_Auto_Key(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        # TODO :: poll NEEDS TO CHECK FOR DOPE SHEET TO BE OPEN
-        return True
+
+        area_type = "DOPESHEET_EDITOR"
+        for area in bpy.context.screen.areas:
+            if area.type == area_type:
+                return True
+
+        return False
 
     # SIMPLE JUST RUNS SOMETHING
     def execute(self, context):
