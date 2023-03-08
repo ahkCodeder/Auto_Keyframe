@@ -36,12 +36,15 @@ class DATA_OT_DS_Auto_Key(bpy.types.Operator):
     @classmethod
     def poll(cls, context):
 
-        area_type = "DOPESHEET_EDITOR"
-        for area in bpy.context.screen.areas:
-            if area.type == area_type:
-                return True
+        try:
+            [area for area in bpy.context.screen.areas if area.type ==
+                "DOPESHEET_EDITOR"][0]
+        except:
+            # TODO :: IMP ERR LOGGING
+            print("YOU NEED TO HAVE :: DOPESHEET_EDITOR :: AREA OPEN")
+            return False
 
-        return False
+        return True
 
     # SIMPLE JUST RUNS SOMETHING
     def execute(self, context):
