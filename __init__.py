@@ -1,8 +1,9 @@
-from auto_key import operator, panel
+from . import panel,operator
+
 bl_info = {
     "name": "Auto Key",
     "author": "AHK <https://github.com/ahkCodeder>",
-    "version": (1, 0),
+    "version": (1, 1),
     "blender": (3, 4, 0),
     "category": "3D View",
     "location": "View3D",
@@ -11,17 +12,19 @@ bl_info = {
     "doc_url": "https://github.com/ahkCodeder/Auto_Keyframe"
 }
 
+classes = [panel, operator]
+
 
 def register():
 
-    operator.register()
-    panel.register()
+    for c in classes:
+        c.register()
 
 
 def unregister():
 
-    operator.unregister()
-    panel.unregister()
+    for c in classes:
+        c.unregister()
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@ YOU NEED TO HAVE DOPE SHEET OPEN
 """
 
 
-def main(MODE="", amount=0, end_frame=0, is_force_spaceing=True):
+def main(MODE="", amount=0, end_frame=0, is_force_spaceing=True, interpolation_list=[""], interpolation_mode=""):
 
     context_override = context_swap("DOPESHEET_EDITOR")
 
@@ -30,9 +30,8 @@ def main(MODE="", amount=0, end_frame=0, is_force_spaceing=True):
 
         move(move_amount=amount, context_override=context_override)
 
-    elif MODE == "EASING":
-        # TODO :: ADD FUNC CALL
-        print("NOT DIFEIND YET")
+    elif MODE == "AUTO_INTERPOLATION":
+        interpolation(amount, interpolation_list, interpolation_mode)
 
 
 def count_steps(steps, isPositive, start_frame, end_frame):
@@ -246,13 +245,40 @@ def force_all_constant_spaceing(force_amount, context_override):
 
         bpy.data.scenes[0].frame_current = start_frame
 
-# TODO :: START HERE :: TEST THAT IT WORKS FOR ALL MODES -> UPLOAD UPDATE
-# TODO :: AUTOMATE APPLYING INTEPOLATION TYPE USE DATA FROM SELECTION AND APPLY ON THE GAPS OF CONNECTED OR GAPS
 
-# !INFO :: it dosnt work for key frames that are spased but for key frames that are SOLOS, and there are ADV SETTINGS TO SCLE MORE THEN JUST POSITOIN SCALE ROTATION AND LOCATION CAN BE ANIPULATED
+def interpolation(keyframe_gap_amount, interpolation_list, interpolation_mode, on_selected=False):
 
-# IDEAR :: BY DEFUALT ONLY MANIPULAT THE ONCE THAT CHANGE THEN AD AN ADV SETTING
+    seleted_keyframes = []
+    # This adds the selected keyframs to a list
+    if on_selected:
+        for f in bpy.context.object.animation_data.action.fcurves:
+            for key_frame in f.keyframe_points:
+                if key_frame.select_control_point:
+                    if not int(key_frame.co[0]) in seleted_keyframes:
+                        seleted_keyframes.append(int(key_frame.co[0]))
 
+    if len(seleted_keyframes) > 0:
+
+        bpy.ops.action.select_all(action='DESELECT')
+
+        for index, keyframe_index in enumerate(seleted_keyframes):
+            bpy.data.scenes[0].frame_current = keyframe_index
+            bpy.ops.action.select_column(context_override, mode='CFRA')
+
+            # !START :: test and then refactor for multiples and diffrent modes
+            step = len(interpolation_list) % index
+            bpy.ops.action.interpolation_type(type=interpolation_list[step])
+
+    else:
+        print()
+
+    # TODO :: apply the frames on the list iwth the array and mode needed
+    if len(interpolation_list) == 1:
+        selection(keyframe_gap_amount)
+    else:
+        print()
+
+# TODO :: CORPRATE CUSTOM PATTERS THAT CAN BE SAVE AKA STUFF THAT OFTHEN HAPPENS LIKE A CERANT SEQUENS OF ARRAYS AND KEY FRAMES SELECTED SO THAT YOU CAN AUTOMATE EVEN FASTER
 # TODO :: MAKE CUSTOME EASING TYPES
     # TODO :: STEPS CONSTAT BUT WITH UP OR STEP DOWN AND OTHER EASING TYPES
 # TODO :: CREATE NEW DYNAMIC EFFECTS SINE WAVE EDITABLE AMPLITUTED AND FREQANSY AND OFF SET HOWEVER THIS MIGHT ALREADY BE AVALABLE SO CHECK IN BLENDER WITH THE WAVE MODIFIER

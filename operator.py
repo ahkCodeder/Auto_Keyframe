@@ -12,7 +12,7 @@ class DATA_OT_DS_Auto_Key(bpy.types.Operator):
         ("SELECTION", "SELECTION", ""),
         ("SPACEING", "SPACEING", ""),
         ("MOVE", "MOVE", ""),
-        ("EASING", "EASING", "")])
+        ("AUTO_INTERPOLATION", "AUTO_INTERPOLATION", "")])
 
     amount: bpy.props.IntProperty(
         name="amount",
@@ -33,6 +33,15 @@ class DATA_OT_DS_Auto_Key(bpy.types.Operator):
         description="this forces the spaceing between frames to be constant",
         default=False)
 
+    interpolation_mode: bpy.props.EnumProperty(items=[(
+        "FORWARD_REAPEAT", "FORWARD_REAPEAT", ""), ("FORWARD_BACKWARD", "FORWARD_BACKWARD", "")])
+
+    interpolation_seq: bpy.props.StringProperty()
+
+    on_selected: bpy.props.BoolProperty(
+        name='Use selected Frames', description='This sets if you should use the frames that are selected, or all frames',
+        default=False)
+
     @classmethod
     def poll(cls, context):
 
@@ -40,7 +49,6 @@ class DATA_OT_DS_Auto_Key(bpy.types.Operator):
             [area for area in bpy.context.screen.areas if area.type ==
                 "DOPESHEET_EDITOR"][0]
         except:
-            # TODO :: IMP ERR LOGGING
             print("YOU NEED TO HAVE :: DOPESHEET_EDITOR :: AREA OPEN")
             return False
 
@@ -51,9 +59,13 @@ class DATA_OT_DS_Auto_Key(bpy.types.Operator):
 
         if self.poll(self):
 
+            interpolation_seq_list = self.interpolation_seq.split(",")[:-1]
+
             main.main(MODE=self.MODE, amount=self.amount,
                       end_frame=self.end_frame,
-                      is_force_spaceing=self.force_all_constant_spaceing)
+                      is_force_spaceing=self.force_all_constant_spaceing,
+                      interpolation_list=interpolation_seq_list,
+                      interpolation_mode=self.interpolation_mode)
 
             return {'FINISHED'}
 
