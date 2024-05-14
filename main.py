@@ -31,7 +31,7 @@ def main(MODE="", amount=0, end_frame=0, is_force_spaceing=True, interpolation_l
         move(move_amount=amount, context_override=context_override)
 
     elif MODE == "AUTO_INTERPOLATION":
-        interpolation(amount, interpolation_list, interpolation_mode)
+        interpolation(context_override,amount, interpolation_list, interpolation_mode)
 
 
 def count_steps(steps, isPositive, start_frame, end_frame):
@@ -87,7 +87,8 @@ def selection(offset_amount, end_frame, context_override):
             break
 
         if count == offset_amount:
-            bpy.ops.action.select_column(context_override, mode='CFRA')
+            with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                bpy.ops.action.select_column(mode='CFRA')
             count = 0
 
         else:
@@ -101,7 +102,8 @@ def selection(offset_amount, end_frame, context_override):
 def move(move_amount, context_override):
 
     if move_amount != 0:
-        bpy.ops.transform.transform(context_override, mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+        with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+            bpy.ops.transform.transform(mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
                                     orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=move_amount,
                                     use_proportional_connected=False, use_proportional_projected=False)
 
@@ -111,7 +113,8 @@ def spaceing(spaceing_amount, end_frame, context_override):
     if spaceing_amount != 0:
         start_frame = bpy.data.scenes[0].frame_current
 
-        bpy.ops.action.select_all(context_override, action='DESELECT')
+        with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+            bpy.ops.action.select_all(action='DESELECT')
 
         if spaceing_amount < 0:
             steps = count_steps(
@@ -121,9 +124,10 @@ def spaceing(spaceing_amount, end_frame, context_override):
             bpy.data.scenes[0].frame_current = start_frame
 
             while True:
-                bpy.ops.action.select_column(context_override, mode='CFRA')
+                with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                    bpy.ops.action.select_column(mode='CFRA')
 
-                bpy.ops.transform.transform(context_override, mode='TIME_TRANSLATE', value=(spaceing_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+                    bpy.ops.transform.transform(mode='TIME_TRANSLATE', value=(spaceing_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
                                             orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1,
                                             use_proportional_connected=False, use_proportional_projected=False)
 
@@ -136,18 +140,21 @@ def spaceing(spaceing_amount, end_frame, context_override):
 
             bpy.data.scenes[0].frame_current = start_frame
 
-            bpy.ops.action.select_all(context_override, action='DESELECT')
+            with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                bpy.ops.action.select_all(action='DESELECT')
 
             while True:
                 ret = bpy.ops.screen.keyframe_jump(next=True)
-                bpy.ops.action.select_column(context_override, mode='CFRA')
+                with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                    bpy.ops.action.select_column(mode='CFRA')
 
                 if ret == {'CANCELLED'}:
                     break
 
             move_amount = spaceing_amount*steps
 
-            bpy.ops.transform.transform(context_override, mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+            with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                bpy.ops.transform.transform(mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
                                         orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=1,
                                         use_proportional_connected=False, use_proportional_projected=False)
 
@@ -161,18 +168,20 @@ def spaceing(spaceing_amount, end_frame, context_override):
             while True:
                 ret = bpy.ops.screen.keyframe_jump(next=True)
 
-                bpy.ops.action.select_column(context_override, mode='CFRA')
+                with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                    bpy.ops.action.select_column(mode='CFRA')
 
                 if ret == {'CANCELLED'}:
                     break
 
             move_amount = spaceing_amount*steps-spaceing_amount
 
-            bpy.ops.transform.transform(context_override, mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+            with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                bpy.ops.transform.transform(mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
                                         orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=move_amount,
                                         use_proportional_connected=False, use_proportional_projected=False)
 
-            bpy.ops.action.select_all(context_override, action='DESELECT')
+                bpy.ops.action.select_all(action='DESELECT')
 
             bpy.data.scenes[0].frame_current = end_frame
 
@@ -184,7 +193,8 @@ def spaceing(spaceing_amount, end_frame, context_override):
                 bpy.ops.screen.keyframe_jump(next=False)
 
             while True:
-                bpy.ops.action.select_column(context_override, mode='CFRA')
+                with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                    bpy.ops.action.select_column(mode='CFRA')
 
                 current_frame = bpy.data.scenes[0].frame_current
 
@@ -192,7 +202,8 @@ def spaceing(spaceing_amount, end_frame, context_override):
 
                 bpy.data.scenes[0].frame_current = current_frame + reposition
 
-                bpy.ops.action.snap(context_override, type='CFRA')
+                with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                    bpy.ops.action.snap(type='CFRA')
 
                 ret = bpy.ops.screen.keyframe_jump(next=False)
 
@@ -201,12 +212,14 @@ def spaceing(spaceing_amount, end_frame, context_override):
 
                 step += 1
 
-                bpy.ops.action.select_all(context_override, action='DESELECT')
+                with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                    bpy.ops.action.select_all(action='DESELECT')
 
 
 def force_all_constant_spaceing(force_amount, context_override):
     if force_amount != 0:
-        bpy.ops.action.select_all(context_override, action='DESELECT')
+        with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+            bpy.ops.action.select_all(action='DESELECT')
 
         start_frame = bpy.data.scenes[0].frame_current
 
@@ -222,19 +235,23 @@ def force_all_constant_spaceing(force_amount, context_override):
                     ((next_frame_index - current_frame) - force_amount)
 
             while True:
-                bpy.ops.action.select_column(context_override, mode='CFRA')
+                with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                    bpy.ops.action.select_column(mode='CFRA')
                 ret = bpy.ops.screen.keyframe_jump(next=True)
 
                 if ret == {'CANCELLED'}:
                     break
 
-            bpy.ops.transform.transform(context_override, mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
+            with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                #! TODO :: check if the force amount works
+                bpy.ops.transform.transform(mode='TIME_TRANSLATE', value=(move_amount, 0, 0, 0), orient_axis='Z', orient_type='GLOBAL', orient_matrix=((1, 0, 0), (0, 1, 0), (0, 0, 1)),
                                         orient_matrix_type='GLOBAL', mirror=False, use_proportional_edit=False, proportional_edit_falloff='SMOOTH', proportional_size=move_amount,
                                         use_proportional_connected=False, use_proportional_projected=False)
 
             bpy.data.scenes[0].frame_current = current_frame + force_amount
 
-            bpy.ops.action.select_all(context_override, action='DESELECT')
+            with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                bpy.ops.action.select_all(action='DESELECT')
 
             ret = bpy.ops.screen.keyframe_jump(next=True)
 
@@ -246,7 +263,7 @@ def force_all_constant_spaceing(force_amount, context_override):
         bpy.data.scenes[0].frame_current = start_frame
 
 
-def interpolation(keyframe_gap_amount, interpolation_list, interpolation_mode, on_selected=False):
+def interpolation(context_override,keyframe_gap_amount, interpolation_list, interpolation_mode, on_selected=False):
 
     seleted_keyframes = []
     # This adds the selected keyframs to a list
@@ -263,7 +280,8 @@ def interpolation(keyframe_gap_amount, interpolation_list, interpolation_mode, o
 
         for index, keyframe_index in enumerate(seleted_keyframes):
             bpy.data.scenes[0].frame_current = keyframe_index
-            bpy.ops.action.select_column(context_override, mode='CFRA')
+            with bpy.context.temp_override(window=context_override['window'],area=context_override['area'],region=context_override['region']):
+                bpy.ops.action.select_column(mode='CFRA')
 
             # !START :: test and then refactor for multiples and diffrent modes
             step = len(interpolation_list) % index
@@ -274,10 +292,12 @@ def interpolation(keyframe_gap_amount, interpolation_list, interpolation_mode, o
 
     # TODO :: apply the frames on the list iwth the array and mode needed
     if len(interpolation_list) == 1:
-        selection(keyframe_gap_amount)
+        #! TODO :: FIX THE ZERO ISSUE 
+        selection(keyframe_gap_amount,0,context_override)
     else:
         print()
 
+# TODO :: MAKE A MODE CALLED AUTO_PUSH_KEY_FRAMES each time you amke a key frame move on an object you skipp a certain amount of frames forward to make the key frameing faster 
 # TODO :: CORPRATE CUSTOM PATTERS THAT CAN BE SAVE AKA STUFF THAT OFTHEN HAPPENS LIKE A CERANT SEQUENS OF ARRAYS AND KEY FRAMES SELECTED SO THAT YOU CAN AUTOMATE EVEN FASTER
 # TODO :: MAKE CUSTOME EASING TYPES
     # TODO :: STEPS CONSTAT BUT WITH UP OR STEP DOWN AND OTHER EASING TYPES
