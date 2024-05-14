@@ -1,6 +1,11 @@
 # Auto_Keyframe
 This automates key selection in blender AND MORE
 
+## **IF YOU WANT TO SPONSOR THIS PROJECT**
+
+try it for free then if you want to sponsor you can use the link
+[**BLENDER MARKET**](https://blendermarket.com/products/grease-pencil-into-mesh-animations)
+
 ## CURRENT CAPAIBETYS 
 
 - selection of keyframes that are spaced appart with **offset_amount**
