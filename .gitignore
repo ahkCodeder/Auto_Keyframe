@@ -1,7 +1,10 @@
 __pycache__/
+nvim
 *.py[cod]
 *$py.class
 
+out/
+pyrightconfig.json
 # C extensions
 *.so
 
