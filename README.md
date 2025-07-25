@@ -4,7 +4,7 @@ This automates key selection in blender AND MORE
 ## **IF YOU WANT TO SPONSOR THIS PROJECT**
 
 try it for free then if you want to sponsor you can use the link
-[**BLENDER MARKET**](https://blendermarket.com/products/grease-pencil-into-mesh-animations)
+[**BLENDER MARKET**](https://superhivemarket.com/products/autokeyframe?search_id=41699707)
 
 ## CURRENT CAPAIBETYS 
 
